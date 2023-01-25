@@ -1,0 +1,122 @@
+# golangci-lint v1.50.0
+run:
+  timeout: 5m
+  tests: false
+  skip-dirs:
+    - internal/mock/
+    - docs/
+    - vendor/
+    - build/
+    - data/
+    - proto/
+    - resources/
+    - scripts/
+  skip-files:
+    - ./*_test.go
+    - ./*pb.go
+linters-settings:
+  funlen:
+    lines: 180
+    statements: 120
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  goimports:
+    local-prefixes: bravo-go-template
+  govet:
+    check-shadowing: true
+    settings:
+      shadow:
+        strict: true
+    enable:
+      - asmdecl
+      - assign
+      - atomic
+      - atomicalign
+      - bools
+      - buildtag
+      - cgocall
+      - composites
+      - copylocks
+      - deepequalerrors
+      - errorsas
+      - fieldalignment
+      - findcall
+      - framepointer
+      - httpresponse
+      - ifaceassert
+      - loopclosure
+      - lostcancel
+      - nilfunc
+      - nilness
+      - printf
+      - reflectvaluecompare
+      - shadow
+      - shift
+      - sigchanyzer
+      - sortslice
+      - stdmethods
+      - stringintconv
+      - structtag
+      - testinggoroutine
+      - tests
+      - unmarshal
+      - unreachable
+      - unsafeptr
+      - unusedresult
+      - unusedwrite
+  lll:
+    line-length: 120
+  nestif:
+    min-complexity: 5
+  tagliatelle:
+    case:
+      rules:
+        json: snake
+linters: # don't use --enable-all
+  disable-all: true
+  enable:
+    - bodyclose # disabled Go v1.18
+    - containedctx
+    - decorder
+    - depguard
+    - dogsled
+    # - dupl # enable it once you're ready, otherwise, make the code works first
+    - durationcheck
+    - errcheck
+    - errchkjson
+    - errname
+    - exportloopref
+    - forbidigo
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - gofmt
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - nestif
+    - noctx # disabled in Go v1.18
+    - nolintlint
+    - prealloc
+    - predeclared
+    - revive
+    # - rowserrcheck # disabled in Go v1.18
+    # - sqlclosecheck # disabled in Go v1.18
+    - stylecheck
+    - staticcheck
+    - stylecheck
+    - tagliatelle
+    - typecheck
+    - unconvert
+    - unused
+    - whitespace

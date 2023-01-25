@@ -1,0 +1,70 @@
+# for local development
+version: "3.9"
+services:
+  grpc:
+    image: "golang:1.19"
+    restart: on-failure
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080/tcp"
+      - "8081:8081/tcp"
+    volumes:
+      - ./:/app
+    working_dir: /app
+    environment:
+      - CGO_ENABLED=0
+      - GO111MODULE=on
+      - GOFLAGS=-mod=vendor
+    env_file:
+      - .env
+    command: /bin/bash -c "make build/grpc && ./build/grpc"
+  # ------------------------------------------ DB SCHEMA DECLARATIVE MIGRATION -----------------------------------------
+  db-schema:
+    image: "arigaio/atlas:0.9.0"
+    restart: "on-failure"
+    volumes:
+      - ./:/app
+    working_dir: /app
+    depends_on:
+      - postgres-dev
+      - postgres
+    # credential for local development is same with .env file and postgres-dev for atlas dev-url is ONLY for a temporary database
+    command:
+      schema apply --auto-approve --url "postgres://root:root@postgres:5432/example?sslmode=disable"
+      --to "file://resources/pgsql/migrations/schema.sql"
+      --dev-url "postgres://root:root@postgres-dev:5432/dev?sslmode=disable"
+  postgres-dev:
+    image: postgres:14-alpine
+    restart: on-failure
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=dev
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+  # ------------------------------------------ DB BROWSER WEB APP ------------------------------------------
+  adminer:
+    image: adminer:4-standalone
+    restart: on-failure
+    depends_on:
+      - postgres
+    ports:
+      - "9000:8080/tcp"
+# ------------------------------------------ INFRASTRUCTURES ------------------------------------------
+  postgres:
+    image: postgres:14-alpine
+    restart: on-failure
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=example
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+volumes:
+  postgres-data:
+  postgres-dev-data:
